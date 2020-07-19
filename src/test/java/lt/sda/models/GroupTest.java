@@ -43,4 +43,17 @@ public class GroupTest {
         }
 
     }
+
+    @Test(expected = java.lang.UnsupportedOperationException.class)
+    public void testBreakTheSystem() throws MaximumNumberOfStudentsReached{
+        Group group = new Group("Test group");
+        for(int i = 0; i<5; i++){
+            Student s = new Student("Test" + i, "Test", "2000-01-01");
+            group.addStudent(s);
+        }
+
+        group.getStudentList().add(new Student("Hacker", "hacker1", "1900-01-01"));
+
+        assertEquals(5, group.getStudentList().size());
+    }
 }

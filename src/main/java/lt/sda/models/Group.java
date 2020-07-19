@@ -1,9 +1,6 @@
 package lt.sda.models;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Group {
@@ -24,16 +21,22 @@ public class Group {
         return name;
     }
 
+    public boolean cleanup(){
+        return studentList.removeIf(s -> s.getAge() <= 20);
+    }
+
     public void addStudent(Student student) throws MaximumNumberOfStudentsReached{
         if(studentList.size() == STUDENTS_LIMIT)
             throw new MaximumNumberOfStudentsReached();
-        student.setTrainer(trainer);
-        trainer.addStudent(student);
+        if(trainer != null){
+            student.setTrainer(trainer);
+            trainer.addStudent(student);
+        }
         this.studentList.add(student);
     }
 
     public Set<Student> getStudentList(){
-        return studentList;
+        return Collections.unmodifiableSet(studentList);
     }
 
     public List<Student> getStudentListSorted(){
@@ -41,5 +44,24 @@ public class Group {
                 .stream()
                 .sorted()
                 .collect(Collectors.toList());
+    }
+
+    public long getStudentCountWithoutPriorKnowledge(){
+        return studentList
+                    .stream()
+                    .filter(s -> !s.hasPriorKnowledge())
+                    .count();
+    }
+
+    public int getStudentCount(){
+        return studentList.size();
+    }
+
+    @Override
+    public String toString(){
+        return String.format(
+                "<Group name: %s studentCount: %d studentsWithoutPreviousJavaKnowledge: %d>",
+                name, getStudentCount(), getStudentCountWithoutPriorKnowledge()
+        );
     }
 }

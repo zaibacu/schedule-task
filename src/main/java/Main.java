@@ -65,7 +65,7 @@ public class Main {
         Group withMostStudents = groupList
                 .stream()
                 .sorted((o1, o2) -> {
-                    return Integer.compare(o2.getStudentList().size(), o1.getStudentList().size());
+                    return Integer.compare(o2.getStudentCount(), o1.getStudentCount());
                 })
                 .findFirst()
                 .get();
@@ -89,6 +89,35 @@ public class Main {
         for(Trainer t : trainerList){
             System.out.printf("Trainer: %s\n", t);
             for(Student s : t.getStudents()){
+                System.out.println(s);
+            }
+        }
+
+        // List all students with prior knowledge
+        System.out.println("Students with prior Java knowledge:");
+        groupList
+                .stream()
+                .map(g -> g.getStudentList())
+                .flatMap(Collection::stream)
+                .filter(s -> s.hasPriorKnowledge())
+                .forEach(s -> System.out.println(s));
+
+        // Find group with most students without previous Java knowledge
+        groupList
+                .stream()
+                .sorted((g1, g2) -> {
+                    return Long.compare(g2.getStudentCountWithoutPriorKnowledge(), g1.getStudentCountWithoutPriorKnowledge());
+                })
+                .findFirst()
+                .ifPresent(g -> System.out.printf("%s has largest number of students without prior Java knowledge\n", g));
+
+        for(Group g : groupList){
+            g.cleanup();
+        }
+
+        System.out.println("Students after cleanup:");
+        for(Group g : groupList){
+            for(Student s : g.getStudentList()){
                 System.out.println(s);
             }
         }
